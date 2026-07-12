@@ -3,7 +3,7 @@ import type { ApiResponse, PaginatedResponse, PaginationParams } from '@/types'
 import type { User, CreateUserPayload, UpdateUserPayload } from '@/types'
 
 // TODO: ajustar os endpoints conforme a API do backend
-const BASE = '/users'
+const BASE = '/usuario'
 
 export const userService = {
   getAll(params?: PaginationParams) {

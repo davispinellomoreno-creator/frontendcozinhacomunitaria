@@ -2,8 +2,8 @@ import { api } from './api'
 import type { ApiResponse, PaginatedResponse, PaginationParams } from '@/types'
 import type { Alimento, CreateAlimentoPayload, UpdateAlimentoPayload } from '@/types'
 
-// TODO: ajustar os endpoints conforme a API do backend
-const BASE = '/alimentos'
+// Path deve bater com o @RequestMapping do AlimentacaoController no backend
+const BASE = '/alimentacao'
 
 export const alimentoService = {
   getAll(params?: PaginationParams) {

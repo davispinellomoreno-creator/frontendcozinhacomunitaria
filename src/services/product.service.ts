@@ -2,8 +2,8 @@ import { api } from './api'
 import type { ApiResponse, PaginatedResponse, PaginationParams } from '@/types'
 import type { Product, CreateProductPayload, UpdateProductPayload } from '@/types'
 
-// TODO: ajustar os endpoints conforme a API do backend
-const BASE = '/products'
+// Path deve bater com o @RequestMapping do ProdutoController no backend
+const BASE = '/Produtos'
 
 export const productService = {
   getAll(params?: PaginationParams) {
