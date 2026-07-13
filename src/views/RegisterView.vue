@@ -17,7 +17,7 @@ async function handleSubmit() {
   loading.value = true
   try {
     await auth.register({ name: name.value, email: email.value, password: password.value })
-    router.push({ name: 'dashboard' })
+    router.push({ name: 'login' }) // ✅ troca 'dashboard' por 'login'
   } catch {
     error.value = 'Não foi possível criar a conta. Verifique os dados informados.'
   } finally {

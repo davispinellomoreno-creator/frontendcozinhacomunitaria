@@ -7,6 +7,8 @@ const auth = useAuthStore()
 
 const navItems = [
   { label: 'Visão geral', to: '/' },
+  { label: 'Produtos', to: '/produtos' },
+  { label: 'Alimentação', to: '/alimentacao' },
 ]
 
 async function handleLogout() {
@@ -46,7 +48,6 @@ async function handleLogout() {
     <div class="flex-1 flex flex-col overflow-hidden">
       <header class="h-16 flex items-center justify-between px-6 border-b border-gray-200 bg-white">
         <h1 class="text-lg font-semibold text-gray-900">Dashboard</h1>
-        <span class="text-sm text-gray-500">{{ auth.user?.name ?? auth.user?.email }}</span>
       </header>
       <main class="flex-1 overflow-y-auto p-6">
         <router-view />

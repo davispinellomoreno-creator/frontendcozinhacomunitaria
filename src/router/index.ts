@@ -26,6 +26,26 @@ const router = createRouter({
           name: 'dashboard',
           component: () => import('@/views/DashboardView.vue'),
         },
+        {
+          path: 'produtos',
+          name: 'products-list',
+          component: () => import('@/views/ProductListView.vue'),
+        },
+        {
+          path: 'produtos/novo',
+          name: 'products-new',
+          component: () => import('@/views/ProductFormView.vue'),
+        },
+        {
+          path: 'produtos/:id/editar',
+          name: 'products-edit',
+          component: () => import('@/views/ProductFormView.vue'),
+        },
+        {
+          path: 'alimentacao',
+          name: 'alimentacao-list',
+          component: () => import('@/views/AlimentoListView.vue'),
+        },
       ],
     },
     {

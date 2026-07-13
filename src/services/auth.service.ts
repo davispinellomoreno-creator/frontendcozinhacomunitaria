@@ -2,35 +2,37 @@ import { api } from './api'
 
 export interface LoginPayload {
   email: string
-  password: string
+  senha: string
 }
 
 export interface LoginResponse {
   token: string
-  user: {
-    id: string | number
-    name: string
-    email: string
-  }
 }
 
 export interface RegisterPayload {
-  name: string
+  nome: string
   email: string
-  password: string
+  senha: string
 }
 
 export const authService = {
   login(payload: LoginPayload) {
     return api.post<LoginResponse>('/auth/login', payload)
   },
+
   register(payload: RegisterPayload) {
-    return api.post<LoginResponse>('/auth/register', payload)
+    // Cadastro usa a rota do UsuarioController, não existe /auth/register
+    return api.post('/usuario', payload)
   },
+
   logout() {
-    return api.post('/auth/logout')
+    // JWT é stateless — não precisa chamar o backend, só limpar o token local
+    localStorage.removeItem('auth_token')
+    window.location.href = '/login'
   },
-  me() {
-    return api.get<LoginResponse['user']>('/auth/me')
-  },
+
+  // ⚠️ /auth/me ainda não existe no backend — comentado até criarmos essa rota
+  // me() {
+  //   return api.get<{ id: string; nome: string; email: string }>('/auth/me')
+  // },
 }

@@ -1,17 +1,29 @@
 export interface Alimento {
   id: number
-  name: string
-  // TODO: adicionar campos conforme a API do backend (calorias, proteinas, carboidratos, gorduras, categoria, etc.)
+  nome: string
+  calorias?: number
+  proteinas?: number
+  carboidratos?: number
+  gorduras?: number
+  categoria?: string
   created_at?: string
   updated_at?: string
 }
 
 export interface CreateAlimentoPayload {
-  name: string
-  // TODO: adicionar campos conforme a API do backend
+  nome: string
+  calorias?: number
+  proteinas?: number
+  carboidratos?: number
+  gorduras?: number
+  categoria?: string
 }
 
 export interface UpdateAlimentoPayload {
-  name?: string
-  // TODO: adicionar campos conforme a API do backend
+  nome?: string
+  calorias?: number
+  proteinas?: number
+  carboidratos?: number
+  gorduras?: number
+  categoria?: string
 }
