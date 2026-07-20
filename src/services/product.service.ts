@@ -1,28 +1,50 @@
 import { api } from './api'
-import type { ApiResponse, PaginatedResponse, PaginationParams } from '@/types'
 import type { Product, CreateProductPayload, UpdateProductPayload } from '@/types'
 
 // Path deve bater com o @RequestMapping do ProdutoController no backend
 const BASE = '/Produtos'
 
+// O backend não envelopa a resposta em { success, data } e é inconsistente no nome
+// do campo do produto: a listagem serializa "produtos" (plural), o detalhe "produto".
+interface RawProduto {
+  id: string
+  produto?: string | null
+  produtos?: string | null
+  validade: string | null
+  quantidade: number
+}
+
+function normalize(raw: RawProduto): Product {
+  return {
+    id: raw.id,
+    produto: raw.produto ?? raw.produtos ?? '',
+    validade: raw.validade,
+    quantidade: raw.quantidade,
+  }
+}
+
 export const productService = {
-  getAll(params?: PaginationParams) {
-    return api.get<PaginatedResponse<Product>>(BASE, { params })
+  async getAll(): Promise<Product[]> {
+    const { data } = await api.get<RawProduto[]>(BASE)
+    return data.map(normalize)
   },
 
-  getById(id: number) {
-    return api.get<ApiResponse<Product>>(`${BASE}/${id}`)
+  async getById(id: string): Promise<Product> {
+    const { data } = await api.get<RawProduto>(`${BASE}/${id}`)
+    return normalize(data)
   },
 
-  create(payload: CreateProductPayload) {
-    return api.post<ApiResponse<Product>>(BASE, payload)
+  async create(payload: CreateProductPayload): Promise<Product> {
+    const { data } = await api.post<RawProduto>(BASE, payload)
+    return normalize(data)
   },
 
-  update(id: number, payload: UpdateProductPayload) {
-    return api.put<ApiResponse<Product>>(`${BASE}/${id}`, payload)
+  async update(id: string, payload: UpdateProductPayload): Promise<Product> {
+    const { data } = await api.put<RawProduto>(`${BASE}/${id}`, payload)
+    return normalize(data)
   },
 
-  remove(id: number) {
-    return api.delete<ApiResponse<null>>(`${BASE}/${id}`)
+  remove(id: string) {
+    return api.delete<void>(`${BASE}/${id}`)
   },
 }

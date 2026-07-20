@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia'
 import { productService } from '@/services/product.service'
-import type { Product, CreateProductPayload, UpdateProductPayload, PaginationParams } from '@/types'
+import type { Product, CreateProductPayload, UpdateProductPayload } from '@/types'
 
 interface ProductState {
   products: Product[]
   selectedProduct: Product | null
-  total: number
   loading: boolean
   error: string | null
 }
@@ -14,24 +13,22 @@ export const useProductStore = defineStore('product', {
   state: (): ProductState => ({
     products: [],
     selectedProduct: null,
-    total: 0,
     loading: false,
     error: null,
   }),
 
   getters: {
-    getProductById: (state) => (id: number) =>
+    total: (state) => state.products.length,
+    getProductById: (state) => (id: string) =>
       state.products.find((p) => p.id === id) ?? null,
   },
 
   actions: {
-    async fetchAll(params?: PaginationParams) {
+    async fetchAll() {
       this.loading = true
       this.error = null
       try {
-        const { data } = await productService.getAll(params)
-        this.products = data.data.items
-        this.total = data.data.total
+        this.products = await productService.getAll()
       } catch (err: any) {
         this.error = err.response?.data?.message ?? 'Erro ao buscar produtos'
       } finally {
@@ -39,12 +36,11 @@ export const useProductStore = defineStore('product', {
       }
     },
 
-    async fetchById(id: number) {
+    async fetchById(id: string) {
       this.loading = true
       this.error = null
       try {
-        const { data } = await productService.getById(id)
-        this.selectedProduct = data.data
+        this.selectedProduct = await productService.getById(id)
       } catch (err: any) {
         this.error = err.response?.data?.message ?? 'Erro ao buscar produto'
       } finally {
@@ -56,8 +52,8 @@ export const useProductStore = defineStore('product', {
       this.loading = true
       this.error = null
       try {
-        const { data } = await productService.create(payload)
-        this.products.push(data.data)
+        const product = await productService.create(payload)
+        this.products.push(product)
       } catch (err: any) {
         this.error = err.response?.data?.message ?? 'Erro ao criar produto'
         throw err
@@ -66,14 +62,14 @@ export const useProductStore = defineStore('product', {
       }
     },
 
-    async update(id: number, payload: UpdateProductPayload) {
+    async update(id: string, payload: UpdateProductPayload) {
       this.loading = true
       this.error = null
       try {
-        const { data } = await productService.update(id, payload)
+        const product = await productService.update(id, payload)
         const index = this.products.findIndex((p) => p.id === id)
-        if (index !== -1) this.products[index] = data.data
-        if (this.selectedProduct?.id === id) this.selectedProduct = data.data
+        if (index !== -1) this.products[index] = product
+        if (this.selectedProduct?.id === id) this.selectedProduct = product
       } catch (err: any) {
         this.error = err.response?.data?.message ?? 'Erro ao atualizar produto'
         throw err
@@ -82,7 +78,7 @@ export const useProductStore = defineStore('product', {
       }
     },
 
-    async remove(id: number) {
+    async remove(id: string) {
       this.loading = true
       this.error = null
       try {

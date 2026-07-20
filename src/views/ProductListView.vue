@@ -5,19 +5,22 @@ import type { Product } from '@/types'
 
 const productStore = useProductStore()
 
-const removingId = ref<number | null>(null)
+const removingId = ref<string | null>(null)
 const removeError = ref('')
 
 onMounted(() => {
   productStore.fetchAll()
 })
 
-function formatPrice(value: number) {
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+function formatDate(value: string | null) {
+  if (!value) return '—'
+  const [year, month, day] = value.split('-')
+  if (!year || !month || !day) return '—'
+  return `${day}/${month}/${year}`
 }
 
 async function handleRemove(product: Product) {
-  if (!confirm(`Remover o produto "${product.nome}"?`)) return
+  if (!confirm(`Remover o produto "${product.produto}"?`)) return
 
   removeError.value = ''
   removingId.value = product.id
@@ -78,23 +81,16 @@ async function handleRemove(product: Product) {
       <table class="min-w-full divide-y divide-slate-200">
         <thead class="bg-slate-50">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Nome</th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Categoria</th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Preço</th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Produto</th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Validade</th>
             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Quantidade</th>
             <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">Ações</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200">
           <tr v-for="product in productStore.products" :key="product.id" class="hover:bg-slate-50">
-            <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ product.nome }}</td>
-            <td class="px-4 py-3 text-sm text-slate-500">
-              <span v-if="product.categoria" class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                {{ product.categoria }}
-              </span>
-              <span v-else>—</span>
-            </td>
-            <td class="px-4 py-3 text-sm text-slate-700">{{ formatPrice(product.preco) }}</td>
+            <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ product.produto || '—' }}</td>
+            <td class="px-4 py-3 text-sm text-slate-500">{{ formatDate(product.validade) }}</td>
             <td class="px-4 py-3 text-sm text-slate-700">
               <span
                 class="rounded-full px-2.5 py-0.5 text-xs font-medium"

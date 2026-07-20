@@ -9,21 +9,18 @@ const productStore = useProductStore()
 
 const productId = computed(() => {
   const id = route.params.id
-  return id ? Number(id) : null
+  return typeof id === 'string' ? id : null
 })
 const isEditing = computed(() => productId.value !== null)
 
 const form = reactive({
-  nome: '',
-  preco: 0,
+  produto: '',
+  validade: '',
   quantidade: 0,
-  descricao: '',
-  categoria: '',
 })
 
 const fieldErrors = reactive({
-  nome: '',
-  preco: '',
+  produto: '',
   quantidade: '',
 })
 
@@ -37,14 +34,12 @@ onMounted(async () => {
 
   loading.value = true
   try {
-    await productStore.fetchById(productId.value as number)
+    await productStore.fetchById(productId.value as string)
     const product = productStore.selectedProduct
     if (product) {
-      form.nome = product.nome
-      form.preco = product.preco
+      form.produto = product.produto
+      form.validade = product.validade ?? ''
       form.quantidade = product.quantidade
-      form.descricao = product.descricao ?? ''
-      form.categoria = product.categoria ?? ''
     }
   } finally {
     loading.value = false
@@ -52,10 +47,9 @@ onMounted(async () => {
 })
 
 function validate() {
-  fieldErrors.nome = form.nome.trim() ? '' : 'Informe o nome do produto.'
-  fieldErrors.preco = form.preco >= 0 ? '' : 'O preço não pode ser negativo.'
+  fieldErrors.produto = form.produto.trim() ? '' : 'Informe o nome do produto.'
   fieldErrors.quantidade = form.quantidade >= 0 ? '' : 'A quantidade não pode ser negativa.'
-  return !fieldErrors.nome && !fieldErrors.preco && !fieldErrors.quantidade
+  return !fieldErrors.produto && !fieldErrors.quantidade
 }
 
 async function handleSubmit() {
@@ -65,17 +59,15 @@ async function handleSubmit() {
   if (!validate()) return
 
   const payload = {
-    nome: form.nome.trim(),
-    preco: form.preco,
+    produtos: form.produto.trim(),
+    validade: form.validade || null,
     quantidade: form.quantidade,
-    descricao: form.descricao.trim() || undefined,
-    categoria: form.categoria.trim() || undefined,
   }
 
   saving.value = true
   try {
     if (isEditing.value) {
-      await productStore.update(productId.value as number, payload)
+      await productStore.update(productId.value as string, payload)
     } else {
       await productStore.create(payload)
     }
@@ -110,28 +102,25 @@ async function handleSubmit() {
     </div>
 
     <form v-else class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm" @submit.prevent="handleSubmit">
-      <label class="mb-1 block text-sm font-medium text-slate-700" for="nome">Nome</label>
+      <label class="mb-1 block text-sm font-medium text-slate-700" for="produto">Nome do produto</label>
       <input
-        id="nome"
-        v-model="form.nome"
+        id="produto"
+        v-model="form.produto"
         type="text"
         class="mb-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
       />
-      <p v-if="fieldErrors.nome" class="mb-3 text-xs text-red-600">{{ fieldErrors.nome }}</p>
+      <p v-if="fieldErrors.produto" class="mb-3 text-xs text-red-600">{{ fieldErrors.produto }}</p>
       <div v-else class="mb-3"></div>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700" for="preco">Preço (R$)</label>
+          <label class="mb-1 block text-sm font-medium text-slate-700" for="validade">Validade</label>
           <input
-            id="preco"
-            v-model.number="form.preco"
-            type="number"
-            step="0.01"
-            min="0"
+            id="validade"
+            v-model="form.validade"
+            type="date"
             class="mb-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
           />
-          <p v-if="fieldErrors.preco" class="text-xs text-red-600">{{ fieldErrors.preco }}</p>
         </div>
 
         <div>
@@ -148,30 +137,14 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <label class="mb-1 mt-3 block text-sm font-medium text-slate-700" for="categoria">Categoria</label>
-      <input
-        id="categoria"
-        v-model="form.categoria"
-        type="text"
-        class="mb-4 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
-      />
-
-      <label class="mb-1 block text-sm font-medium text-slate-700" for="descricao">Descrição</label>
-      <textarea
-        id="descricao"
-        v-model="form.descricao"
-        rows="3"
-        class="mb-4 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
-      ></textarea>
-
-      <p v-if="submitError" class="mb-4 flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2.5 text-sm text-red-700">
+      <p v-if="submitError" class="mb-4 mt-4 flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2.5 text-sm text-red-700">
         <svg class="h-4.5 w-4.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 6a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 6Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
         </svg>
         {{ submitError }}
       </p>
 
-      <div class="flex items-center gap-3">
+      <div class="mt-4 flex items-center gap-3">
         <button
           type="submit"
           :disabled="saving"
