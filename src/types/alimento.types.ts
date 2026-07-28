@@ -1,29 +1,12 @@
 export interface Alimento {
-  id: number
-  nome: string
-  calorias?: number
-  proteinas?: number
-  carboidratos?: number
-  gorduras?: number
-  categoria?: string
-  created_at?: string
-  updated_at?: string
+  id: string
+  alimentacao: string
 }
 
 export interface CreateAlimentoPayload {
-  nome: string
-  calorias?: number
-  proteinas?: number
-  carboidratos?: number
-  gorduras?: number
-  categoria?: string
+  alimentacao: string
 }
 
 export interface UpdateAlimentoPayload {
-  nome?: string
-  calorias?: number
-  proteinas?: number
-  carboidratos?: number
-  gorduras?: number
-  categoria?: string
+  alimentacao: string
 }

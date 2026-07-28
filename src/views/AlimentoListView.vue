@@ -1,19 +1,35 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAlimentoStore } from '@/stores/alimento.store'
 
+const router = useRouter()
 const alimentoStore = useAlimentoStore()
 
 onMounted(() => {
   alimentoStore.fetchAll()
 })
+
+async function handleDelete(id: string) {
+  if (confirm('Tem certeza que deseja excluir este item?')) {
+    await alimentoStore.remove(id)
+  }
+}
 </script>
 
 <template>
   <div>
-    <div class="mb-6">
-      <h2 class="text-xl font-semibold text-slate-900">Alimentação</h2>
-      <p class="mt-1 text-sm text-slate-500">Itens de alimentação cadastrados.</p>
+    <div class="mb-6 flex items-center justify-between">
+      <div>
+        <h2 class="text-xl font-semibold text-slate-900">Alimentação</h2>
+        <p class="mt-1 text-sm text-slate-500">Itens de alimentação cadastrados.</p>
+      </div>
+      <RouterLink
+        :to="{ name: 'alimentacao-novo' }"
+        class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+      >
+        + Novo Alimento
+      </RouterLink>
     </div>
 
     <div v-if="alimentoStore.loading" class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
@@ -38,27 +54,27 @@ onMounted(() => {
       <table class="min-w-full divide-y divide-slate-200">
         <thead class="bg-slate-50">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Nome</th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Categoria</th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Calorias</th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Proteínas</th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Carboidratos</th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Gorduras</th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Alimento</th>
+            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">Ações</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200">
           <tr v-for="alimento in alimentoStore.alimentos" :key="alimento.id" class="hover:bg-slate-50">
-            <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ alimento.nome }}</td>
-            <td class="px-4 py-3 text-sm text-slate-500">
-              <span v-if="alimento.categoria" class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                {{ alimento.categoria }}
-              </span>
-              <span v-else>—</span>
+            <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ alimento.alimentacao }}</td>
+            <td class="px-4 py-3 text-right text-sm">
+              <button
+                @click="router.push({ name: 'alimentacao-editar', params: { id: alimento.id } })"
+                class="mr-3 text-indigo-600 hover:text-indigo-800"
+              >
+                Editar
+              </button>
+              <button
+                @click="handleDelete(alimento.id)"
+                class="text-red-600 hover:text-red-800"
+              >
+                Excluir
+              </button>
             </td>
-            <td class="px-4 py-3 text-sm text-slate-700">{{ alimento.calorias ?? '—' }}</td>
-            <td class="px-4 py-3 text-sm text-slate-700">{{ alimento.proteinas ?? '—' }}</td>
-            <td class="px-4 py-3 text-sm text-slate-700">{{ alimento.carboidratos ?? '—' }}</td>
-            <td class="px-4 py-3 text-sm text-slate-700">{{ alimento.gorduras ?? '—' }}</td>
           </tr>
         </tbody>
       </table>
