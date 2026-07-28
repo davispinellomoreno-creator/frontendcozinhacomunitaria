@@ -46,6 +46,16 @@ const router = createRouter({
           name: 'alimentacao-list',
           component: () => import('@/views/AlimentoListView.vue'),
         },
+        {
+          path: 'alimentacao/novo',
+          name: 'alimentacao-new',
+          component: () => import('@/views/AlimentoFromView.vue'),
+        },
+        {
+          path: 'alimentacao/:id/editar',
+          name: 'alimentacao-edit',
+          component: () => import('@/views/AlimentoFromView.vue'),
+        },
       ],
     },
     {
