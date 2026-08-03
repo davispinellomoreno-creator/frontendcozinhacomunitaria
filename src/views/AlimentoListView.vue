@@ -25,7 +25,7 @@ async function handleDelete(id: string) {
         <p class="mt-1 text-sm text-slate-500">Itens de alimentação cadastrados.</p>
       </div>
       <RouterLink
-        :to="{ name: 'alimentacao-novo' }"
+        :to="{ name: 'alimentacao-new' }"
         class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
       >
         + Novo Alimento
@@ -63,7 +63,7 @@ async function handleDelete(id: string) {
             <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ alimento.alimentacao }}</td>
             <td class="px-4 py-3 text-right text-sm">
               <button
-                @click="router.push({ name: 'alimentacao-editar', params: { id: alimento.id } })"
+                @click="router.push({ name: 'alimentacao-edit', params: { id: alimento.id } })"
                 class="mr-3 text-indigo-600 hover:text-indigo-800"
               >
                 Editar
