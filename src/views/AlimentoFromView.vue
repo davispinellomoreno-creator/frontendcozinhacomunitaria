@@ -39,7 +39,7 @@ async function handleSubmit() {
       await alimentoStore.create(payload)
     }
 
-    router.push({ name: 'alimentacao' })
+    router.push({ name: 'alimentacao-list' }) // ✅ corrigido
   } catch (err) {
     error.value = 'Erro ao salvar alimento. Verifique os dados informados.'
   } finally {
@@ -71,7 +71,7 @@ async function handleSubmit() {
         <button type="submit" :disabled="loading" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50">
           {{ loading ? 'Salvando...' : 'Salvar' }}
         </button>
-        <button type="button" @click="router.push({ name: 'alimentacao' })" class="rounded-md px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">
+        <button type="button" @click="router.push({ name: 'alimentacao-list' })" class="rounded-md px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">
           Cancelar
         </button>
       </div>
