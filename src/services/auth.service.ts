@@ -7,6 +7,7 @@ export interface LoginPayload {
 
 export interface LoginResponse {
   token: string
+  perfil: string // ✅ novo campo
 }
 
 export interface RegisterPayload {

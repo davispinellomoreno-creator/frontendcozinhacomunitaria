@@ -56,6 +56,12 @@ const router = createRouter({
           name: 'alimentacao-edit',
           component: () => import('@/views/AlimentoFromView.vue'),
         },
+        {
+          path: 'usuarios',
+          name: 'users-list',
+          component: () => import('@/views/UserListView.vue'),
+          meta: { requiresAdmin: true }, // ✅ novo — só ADMIN acessa
+        },
       ],
     },
     {
@@ -73,6 +79,10 @@ router.beforeEach((to) => {
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
     return { name: 'login' }
+  }
+
+  if (to.meta.requiresAdmin && !auth.isAdmin) { // ✅ novo — bloqueia não-admin
+    return { name: 'dashboard' }
   }
 
   if ((to.name === 'login' || to.name === 'register') && auth.isAuthenticated) {

@@ -3,10 +3,12 @@ import { computed, onMounted, ref } from 'vue'
 import { useProductStore } from '@/stores/product.store'
 import { useAlimentoStore } from '@/stores/alimento.store'
 import { useUserStore } from '@/stores/user.store'
+import { useAuthStore } from '@/stores/auth.store'
 
 const productStore = useProductStore()
 const alimentoStore = useAlimentoStore()
 const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const usersError = ref(false)
 
@@ -37,7 +39,7 @@ const stats = computed(() => [
   {
     label: 'Usuários cadastrados',
     value: usersError.value || userStore.loading ? null : userStore.total,
-    to: null,
+    to: authStore.isAdmin ? { name: 'users-list' } : null, // ✅ só linka se for admin
     accent: 'bg-amber-50 text-amber-600',
     icon: 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m5-2.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-8 0',
   },

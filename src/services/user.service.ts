@@ -1,28 +1,31 @@
 import { api } from './api'
-import type { ApiResponse, PaginatedResponse, PaginationParams } from '@/types'
+import type { PaginationParams } from '@/types'
 import type { User, CreateUserPayload, UpdateUserPayload } from '@/types'
 
-// TODO: ajustar os endpoints conforme a API do backend
 const BASE = '/usuario'
 
 export const userService = {
   getAll(params?: PaginationParams) {
-    return api.get<PaginatedResponse<User>>(BASE, { params })
+    return api.get<User[]>(BASE, { params }) // ✅ array direto
   },
 
-  getById(id: number) {
-    return api.get<ApiResponse<User>>(`${BASE}/${id}`)
+  getById(id: string) {
+    return api.get<User>(`${BASE}/${id}`) // ✅ objeto direto
   },
 
   create(payload: CreateUserPayload) {
-    return api.post<ApiResponse<User>>(BASE, payload)
+    return api.post<User>(BASE, payload)
   },
 
-  update(id: number, payload: UpdateUserPayload) {
-    return api.put<ApiResponse<User>>(`${BASE}/${id}`, payload)
+  update(id: string, payload: UpdateUserPayload) {
+    return api.put<User>(`${BASE}/${id}`, payload)
   },
 
-  remove(id: number) {
-    return api.delete<ApiResponse<null>>(`${BASE}/${id}`)
+  updatePerfil(id: string, perfil: 'ADMIN' | 'USER') {
+    return api.patch<User>(`${BASE}/${id}/perfil`, { perfil })
+  },
+
+  remove(id: string) {
+    return api.delete<void>(`${BASE}/${id}`)
   },
 }

@@ -1,21 +1,18 @@
 export interface User {
-  id: number
-  name: string
+  id: string
+  nome: string
   email: string
-  // TODO: adicionar campos conforme a API do backend
-  created_at?: string
-  updated_at?: string
+  ativo: boolean
+  perfil: 'ADMIN' | 'USER'
 }
 
 export interface CreateUserPayload {
-  name: string
+  nome: string
   email: string
-  password: string
-  // TODO: adicionar campos conforme a API do backend
+  senha: string
+  ativo?: boolean
 }
 
 export interface UpdateUserPayload {
-  name?: string
-  email?: string
-  // TODO: adicionar campos conforme a API do backend
+  nome: string
 }
