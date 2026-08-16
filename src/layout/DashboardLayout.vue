@@ -7,29 +7,42 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
-const navItems = [
-  {
-    label: 'Visão geral',
-    to: '/',
-    name: 'dashboard',
-    icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
-  },
-  {
-    label: 'Produtos',
-    to: '/produtos',
-    name: 'products-list',
-    icon: 'M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z',
-  },
-  {
-    label: 'Alimentação',
-    to: '/alimentacao',
-    name: 'alimentacao-list',
-    icon: 'M12 3c-3.5 0-6 2.5-6 6 0 4.5 6 12 6 12s6-7.5 6-12c0-3.5-2.5-6-6-6zM9 9a3 3 0 106 0 3 3 0 00-6 0z',
-  },
-]
+const navItems = computed(() => {
+  const items = [
+    {
+      label: 'Visão geral',
+      to: '/',
+      name: 'dashboard',
+      icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
+    },
+    {
+      label: 'Produtos',
+      to: '/produtos',
+      name: 'products-list',
+      icon: 'M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z',
+    },
+    {
+      label: 'Alimentação',
+      to: '/alimentacao',
+      name: 'alimentacao-list',
+      icon: 'M12 3c-3.5 0-6 2.5-6 6 0 4.5 6 12 6 12s6-7.5 6-12c0-3.5-2.5-6-6-6zM9 9a3 3 0 106 0 3 3 0 00-6 0z',
+    },
+  ]
+
+  if (auth.isAdmin) {
+    items.push({
+      label: 'Usuários',
+      to: '/usuarios',
+      name: 'users-list',
+      icon: 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m5-2.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-8 0',
+    })
+  }
+
+  return items
+})
 
 const pageTitle = computed(() => {
-  const match = navItems.find((item) => item.name === route.name)
+  const match = navItems.value.find((item) => item.name === route.name)
   return match?.label ?? 'Dashboard'
 })
 

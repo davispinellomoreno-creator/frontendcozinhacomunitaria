@@ -2,9 +2,11 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAlimentoStore } from '@/stores/alimento.store'
+import { useAuthStore } from '@/stores/auth.store' // ✅ novo import
 
 const router = useRouter()
 const alimentoStore = useAlimentoStore()
+const authStore = useAuthStore() // ✅ nova instância
 
 onMounted(() => {
   alimentoStore.fetchAll()
@@ -69,6 +71,7 @@ async function handleDelete(id: string) {
                 Editar
               </button>
               <button
+                v-if="authStore.isAdmin"
                 @click="handleDelete(alimento.id)"
                 class="text-red-600 hover:text-red-800"
               >

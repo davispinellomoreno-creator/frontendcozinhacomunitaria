@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', {
   }),
 
   getters: {
-    getUserById: (state) => (id: number) =>
+    getUserById: (state) => (id: string) =>
       state.users.find((u) => u.id === id) ?? null,
   },
 
@@ -30,8 +30,8 @@ export const useUserStore = defineStore('user', {
       this.error = null
       try {
         const { data } = await userService.getAll(params)
-        this.users = data.data.items
-        this.total = data.data.total
+        this.users = (data ?? []).filter((item) => item != null)
+        this.total = this.users.length
       } catch (err: any) {
         this.error = err.response?.data?.message ?? 'Erro ao buscar usuários'
       } finally {
@@ -39,12 +39,12 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async fetchById(id: number) {
+    async fetchById(id: string) {
       this.loading = true
       this.error = null
       try {
         const { data } = await userService.getById(id)
-        this.selectedUser = data.data
+        this.selectedUser = data
       } catch (err: any) {
         this.error = err.response?.data?.message ?? 'Erro ao buscar usuário'
       } finally {
@@ -57,7 +57,7 @@ export const useUserStore = defineStore('user', {
       this.error = null
       try {
         const { data } = await userService.create(payload)
-        this.users.push(data.data)
+        if (data) this.users.push(data)
       } catch (err: any) {
         this.error = err.response?.data?.message ?? 'Erro ao criar usuário'
         throw err
@@ -66,14 +66,14 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async update(id: number, payload: UpdateUserPayload) {
+    async update(id: string, payload: UpdateUserPayload) {
       this.loading = true
       this.error = null
       try {
         const { data } = await userService.update(id, payload)
         const index = this.users.findIndex((u) => u.id === id)
-        if (index !== -1) this.users[index] = data.data
-        if (this.selectedUser?.id === id) this.selectedUser = data.data
+        if (index !== -1 && data) this.users[index] = data
+        if (this.selectedUser?.id === id) this.selectedUser = data
       } catch (err: any) {
         this.error = err.response?.data?.message ?? 'Erro ao atualizar usuário'
         throw err
@@ -82,7 +82,22 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async remove(id: number) {
+    async updatePerfil(id: string, perfil: 'ADMIN' | 'USER') {
+      this.loading = true
+      this.error = null
+      try {
+        const { data } = await userService.updatePerfil(id, perfil)
+        const index = this.users.findIndex((u) => u.id === id)
+        if (index !== -1 && data) this.users[index] = data
+      } catch (err: any) {
+        this.error = err.response?.data?.message ?? 'Erro ao atualizar perfil'
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async remove(id: string) {
       this.loading = true
       this.error = null
       try {

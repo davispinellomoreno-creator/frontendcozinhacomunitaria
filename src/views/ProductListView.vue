@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useProductStore } from '@/stores/product.store'
+import { useAuthStore } from '@/stores/auth.store' // ✅ novo import
 import type { Product } from '@/types'
 
 const productStore = useProductStore()
+const authStore = useAuthStore() // ✅ nova instância
 
 const removingId = ref<string | null>(null)
 const removeError = ref('')
@@ -107,6 +109,7 @@ async function handleRemove(product: Product) {
                 Editar
               </RouterLink>
               <button
+                v-if="authStore.isAdmin"
                 type="button"
                 :disabled="removingId === product.id"
                 class="font-medium text-red-600 hover:underline disabled:opacity-50"
