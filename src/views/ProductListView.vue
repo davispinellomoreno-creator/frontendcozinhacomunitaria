@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useProductStore } from '@/stores/product.store'
+import { useAuthStore } from '@/stores/auth.store'
 import type { Product } from '@/types'
 
 const productStore = useProductStore()
+const authStore = useAuthStore()
 
 const removingId = ref<string | null>(null)
 const removeError = ref('')
@@ -84,6 +86,7 @@ async function handleRemove(product: Product) {
             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Produto</th>
             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Validade</th>
             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Quantidade</th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Cadastrado por</th>
             <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">Ações</th>
           </tr>
         </thead>
@@ -99,6 +102,7 @@ async function handleRemove(product: Product) {
                 {{ product.quantidade }}
               </span>
             </td>
+            <td class="px-4 py-3 text-sm text-slate-500">{{ product.criadoPor || '—' }}</td>
             <td class="px-4 py-3 text-right text-sm">
               <RouterLink
                 :to="{ name: 'products-edit', params: { id: product.id } }"
@@ -107,6 +111,7 @@ async function handleRemove(product: Product) {
                 Editar
               </RouterLink>
               <button
+                v-if="authStore.isAdmin"
                 type="button"
                 :disabled="removingId === product.id"
                 class="font-medium text-red-600 hover:underline disabled:opacity-50"
