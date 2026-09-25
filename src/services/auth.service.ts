@@ -22,18 +22,12 @@ export const authService = {
   },
 
   register(payload: RegisterPayload) {
-    // Cadastro usa a rota do UsuarioController, não existe /auth/register
     return api.post('/usuario', payload)
   },
 
   logout() {
-    // JWT é stateless — não precisa chamar o backend, só limpar o token local
     localStorage.removeItem('auth_token')
+    localStorage.removeItem('user_perfil')
     window.location.href = '/login'
   },
-
-  // ⚠️ /auth/me ainda não existe no backend — comentado até criarmos essa rota
-  // me() {
-  //   return api.get<{ id: string; nome: string; email: string }>('/auth/me')
-  // },
 }

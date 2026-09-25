@@ -6,7 +6,6 @@ interface AuthState {
   perfil: string | null
 }
 
-// Payloads que a TELA usa (inglês) — a store traduz antes de chamar o service
 interface RegisterFormPayload {
   name: string
   email: string
@@ -47,13 +46,12 @@ export const useAuthStore = defineStore('auth', {
         senha: payload.password,
       }
       await authService.register(registerPayload)
-      // cadastro não gera token — usuário precisa fazer login depois
     },
 
     logout() {
       this.token = null
       this.perfil = null
-      authService.logout() // já limpa localStorage e redireciona
+      authService.logout()
     },
   },
 })
